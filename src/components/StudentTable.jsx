@@ -1,47 +1,81 @@
 import { useEffect, useState } from "react";
+
 import {
   getStudents,
-  deleteStudent,
+  deleteStudent
 } from "../services/googleSheets";
 
 function StudentTable({
   refresh,
-  onAuthenticationExpired,
+  onAuthenticationExpired
 }) {
-  const [students, setStudents] = useState([]);
-  const [search, setSearch] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [students, setStudents] =
+    useState([]);
 
-  const [sortField, setSortField] = useState("");
-  const [sortDirection, setSortDirection] = useState("asc");
+  const [search, setSearch] =
+    useState("");
 
-  const loadStudents = async () => {
+  const [loading, setLoading] =
+    useState(true);
+
+  const [error, setError] =
+    useState("");
+
+  const [sortField, setSortField] =
+    useState("");
+
+  const [
+    sortDirection,
+    setSortDirection
+  ] = useState("asc");
+
+  const [refreshing, setRefreshing] =
+    useState(false);
+
+  const loadStudents = async (
+    showLoader = true
+  ) => {
     try {
-      setLoading(true);
+      if (showLoader) {
+        setLoading(true);
+      }
+
       setError("");
 
-      const result = await getStudents();
+      const result =
+        await getStudents();
 
       if (result.success) {
-        setStudents(result.students || []);
+        setStudents(
+          result.students || []
+        );
       } else {
         setError(
-          result.message || "Unable to load students."
+          result.message ||
+            "Unable to load students."
         );
 
         if (
-          result.message === "Authentication required." &&
+          result.message ===
+            "Authentication required." &&
           onAuthenticationExpired
         ) {
           onAuthenticationExpired();
         }
       }
     } catch (error) {
-      console.error("Load students error:", error);
-      setError("Unable to connect to the server.");
+      console.error(
+        "Load students error:",
+        error
+      );
+
+      setError(
+        "Unable to connect to the server."
+      );
     } finally {
-      setLoading(false);
+      if (showLoader) {
+        setLoading(false);
+      }
     }
   };
 
@@ -49,48 +83,79 @@ function StudentTable({
     loadStudents();
   }, [refresh]);
 
-  const handleDelete = async (id) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this student?"
-    );
+  const handleRefresh =
+    async () => {
+      try {
+        setRefreshing(true);
+        await loadStudents(false);
+      } finally {
+        setRefreshing(false);
+      }
+    };
 
-    if (!confirmed) {
-      return;
-    }
-
-    try {
-      const result = await deleteStudent(id);
-
-      if (result.success) {
-        setStudents((previousStudents) =>
-          previousStudents.filter(
-            (student) =>
-              String(student.id) !== String(id)
-          )
+  const handleDelete =
+    async (id) => {
+      const confirmed =
+        window.confirm(
+          "Are you sure you want to delete this student?"
         );
-      } else {
-        if (
-          result.message === "Authentication required." &&
-          onAuthenticationExpired
-        ) {
-          onAuthenticationExpired();
-          return;
+
+      if (!confirmed) {
+        return;
+      }
+
+      try {
+        const result =
+          await deleteStudent(id);
+
+        if (result.success) {
+          setStudents(
+            (previousStudents) =>
+              previousStudents.filter(
+                (student) =>
+                  String(
+                    student.id
+                  ) !== String(id)
+              )
+          );
+        } else {
+          if (
+            result.message ===
+              "Authentication required." &&
+            onAuthenticationExpired
+          ) {
+            onAuthenticationExpired();
+            return;
+          }
+
+          alert(
+            result.message ||
+              "Delete failed."
+          );
         }
+      } catch (error) {
+        console.error(
+          "Delete student error:",
+          error
+        );
 
         alert(
-          result.message || "Delete failed."
+          "Unable to delete student."
         );
       }
-    } catch (error) {
-      console.error("Delete student error:", error);
-      alert("Unable to delete student.");
-    }
-  };
+    };
 
-  const handleSort = (field) => {
-    if (sortField === field) {
-      setSortDirection((previous) =>
-        previous === "asc" ? "desc" : "asc"
+  const handleSort = (
+    field
+  ) => {
+    if (
+      sortField === field
+    ) {
+      setSortDirection(
+        (previous) =>
+          previous === "asc"
+            ? "desc"
+            : "asc"
       );
     } else {
       setSortField(field);
@@ -98,73 +163,110 @@ function StudentTable({
     }
   };
 
-  const getSortArrow = (field) => {
-    if (sortField !== field) {
-      return "";
-    }
-
-    return sortDirection === "asc"
-      ? " ↑"
-      : " ↓";
-  };
-
-  const filteredStudents = students
-    .filter((student) => {
-      const searchText = search
-        .trim()
-        .toLowerCase();
-
-      if (!searchText) {
-        return true;
+  const getSortArrow =
+    (field) => {
+      if (
+        sortField !== field
+      ) {
+        return "";
       }
 
-      return (
-        String(student.name || "")
-          .toLowerCase()
-          .includes(searchText) ||
-        String(student.email || "")
-          .toLowerCase()
-          .includes(searchText) ||
-        String(student.phone || "")
-          .toLowerCase()
-          .includes(searchText) ||
-        String(student.gender || "")
-          .toLowerCase()
-          .includes(searchText)
-      );
-    })
-    .sort((a, b) => {
-      if (!sortField) {
-        return 0;
-      }
+      return sortDirection ===
+        "asc"
+        ? " ↑"
+        : " ↓";
+    };
 
-      const valueA = String(
-        a[sortField] || ""
-      ).trim();
+  const filteredStudents =
+    students
+      .filter((student) => {
+        const searchText =
+          search
+            .trim()
+            .toLowerCase();
 
-      const valueB = String(
-        b[sortField] || ""
-      ).trim();
-
-      const comparison = valueA.localeCompare(
-        valueB,
-        undefined,
-        {
-          numeric: true,
-          sensitivity: "base",
+        if (!searchText) {
+          return true;
         }
-      );
 
-      return sortDirection === "asc"
-        ? comparison
-        : -comparison;
-    });
+        return (
+          String(
+            student.universityId ||
+              ""
+          )
+            .toLowerCase()
+            .includes(searchText) ||
+
+          String(
+            student.name || ""
+          )
+            .toLowerCase()
+            .includes(searchText) ||
+
+          String(
+            student.email || ""
+          )
+            .toLowerCase()
+            .includes(searchText) ||
+
+          String(
+            student.phone || ""
+          )
+            .toLowerCase()
+            .includes(searchText) ||
+
+          String(
+            student.gender || ""
+          )
+            .toLowerCase()
+            .includes(searchText)
+        );
+      })
+      .sort((a, b) => {
+        if (!sortField) {
+          return 0;
+        }
+
+        const valueA =
+          String(
+            a[sortField] || ""
+          ).trim();
+
+        const valueB =
+          String(
+            b[sortField] || ""
+          ).trim();
+
+        const comparison =
+          valueA.localeCompare(
+            valueB,
+            undefined,
+            {
+              numeric: true,
+              sensitivity:
+                "base"
+            }
+          );
+
+        return sortDirection ===
+          "asc"
+          ? comparison
+          : -comparison;
+      });
 
   if (loading) {
     return (
-      <div className="table-card">
-        <div className="loading">
-          Loading students...
+      <div className="table-card loading-card">
+        <div className="spinner">
+          {Array.from(
+            { length: 12 },
+            (_, index) => (
+              <div
+                key={index}
+                className="spinner-blade"
+              />
+            )
+          )}
         </div>
       </div>
     );
@@ -177,19 +279,57 @@ function StudentTable({
           <h2>Students</h2>
 
           <p>
-            Total students: {students.length}
+            Total students:{" "}
+            {students.length}
           </p>
         </div>
 
-        <input
-          className="search-input"
-          type="text"
-          placeholder="Search students..."
-          value={search}
-          onChange={(event) =>
-            setSearch(event.target.value)
-          }
-        />
+        <div className="table-actions">
+          <input
+            className="search-input"
+            type="text"
+            placeholder="Search students..."
+            value={search}
+            onChange={(event) =>
+              setSearch(
+                event.target.value
+              )
+            }
+          />
+
+          <button
+            type="button"
+            className="refresh-button"
+            onClick={
+              handleRefresh
+            }
+            disabled={refreshing}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              className={
+                refreshing
+                  ? "refresh-icon spinning"
+                  : "refresh-icon"
+              }
+              viewBox="0 0 16 16"
+            >
+              <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z" />
+
+              <path
+                fillRule="evenodd"
+                d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z"
+              />
+            </svg>
+
+            {refreshing
+              ? "Refreshing..."
+              : "Refresh"}
+          </button>
+        </div>
       </div>
 
       {error && (
@@ -199,7 +339,8 @@ function StudentTable({
       )}
 
       {!error &&
-        filteredStudents.length === 0 && (
+        filteredStudents.length ===
+          0 && (
           <div className="empty-state">
             {search
               ? "No students match your search."
@@ -208,7 +349,8 @@ function StudentTable({
         )}
 
       {!error &&
-        filteredStudents.length > 0 && (
+        filteredStudents.length >
+          0 && (
           <div className="table-wrapper">
             <table>
               <thead>
@@ -218,67 +360,122 @@ function StudentTable({
                   <th
                     className="sortable"
                     onClick={() =>
-                      handleSort("name")
+                      handleSort(
+                        "universityId"
+                      )
+                    }
+                  >
+                    University ID
+                    {getSortArrow(
+                      "universityId"
+                    )}
+                  </th>
+
+                  <th
+                    className="sortable"
+                    onClick={() =>
+                      handleSort(
+                        "name"
+                      )
                     }
                   >
                     Name
-                    {getSortArrow("name")}
+                    {getSortArrow(
+                      "name"
+                    )}
                   </th>
 
                   <th
                     className="sortable"
                     onClick={() =>
-                      handleSort("email")
+                      handleSort(
+                        "email"
+                      )
                     }
                   >
                     Email
-                    {getSortArrow("email")}
+                    {getSortArrow(
+                      "email"
+                    )}
                   </th>
 
                   <th
                     className="sortable"
                     onClick={() =>
-                      handleSort("phone")
+                      handleSort(
+                        "phone"
+                      )
                     }
                   >
                     Phone
-                    {getSortArrow("phone")}
+                    {getSortArrow(
+                      "phone"
+                    )}
                   </th>
 
                   <th
                     className="sortable"
                     onClick={() =>
-                      handleSort("gender")
+                      handleSort(
+                        "gender"
+                      )
                     }
                   >
                     Gender
-                    {getSortArrow("gender")}
+                    {getSortArrow(
+                      "gender"
+                    )}
                   </th>
 
-                  <th>Action</th>
+                  <th>
+                    Action
+                  </th>
                 </tr>
               </thead>
 
               <tbody>
                 {filteredStudents.map(
-                  (student, index) => (
-                    <tr key={student.id}>
-                      <td>{index + 1}</td>
-
+                  (
+                    student,
+                    index
+                  ) => (
+                    <tr
+                      key={
+                        student.id
+                      }
+                    >
                       <td>
-                        {student.name}
+                        {index + 1}
                       </td>
 
                       <td>
-                        {student.email}
+                        {
+                          student.universityId
+                        }
                       </td>
 
                       <td>
-                        {student.phone}
+                        {
+                          student.name
+                        }
                       </td>
 
                       <td>
-                        {student.gender}
+                        {
+                          student.email
+                        }
+                      </td>
+
+                      <td>
+                        {
+                          student.phone
+                        }
+                      </td>
+
+                      <td>
+                        {
+                          student.gender
+                        }
                       </td>
 
                       <td>

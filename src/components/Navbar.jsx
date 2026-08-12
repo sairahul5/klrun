@@ -1,33 +1,43 @@
-function Navbar({ activePage, setActivePage }) {
+function Navbar({
+  page,
+  setPage,
+  authenticated
+}) {
   return (
     <nav className="navbar">
       <div className="navbar-inner">
-        <div
-          className="logo"
-          onClick={() => setActivePage("register")}
+        <button
+          className="brand-button"
+          onClick={() =>
+            setPage("register")
+          }
         >
-          Student Portal
-        </div>
+          KL RUN
+        </button>
 
         <div className="nav-links">
           <button
             className={
-              activePage === "register"
+              page === "register"
                 ? "nav-button active"
                 : "nav-button"
             }
-            onClick={() => setActivePage("register")}
+            onClick={() =>
+              setPage("register")
+            }
           >
             Register
           </button>
 
           <button
             className={
-              activePage === "students"
+              page === "students"
                 ? "nav-button active"
                 : "nav-button"
             }
-            onClick={() => setActivePage("students")}
+            onClick={() =>
+              setPage("students")
+            }
           >
             Students
           </button>

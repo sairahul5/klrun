@@ -1,18 +1,27 @@
 const GOOGLE_APPS_SCRIPT_URL =
-  "https://script.google.com/macros/s/AKfycbwgP1EFNB2KmKkT08ryLEfV473nyKLJgj1y5ciHpoMk5r-O6pGT7ek4qgtdjGfG3D5sCw/exec";
+  process.env.GOOGLE_APPS_SCRIPT_URL;
 
-export default async function handler(req, res) {
+export default async function handler(
+  req,
+  res
+) {
   try {
-    if (req.method === "OPTIONS") {
-      return res.status(200).end();
+    if (!GOOGLE_APPS_SCRIPT_URL) {
+      return res.status(500).json({
+        success: false,
+        message:
+          "Google Apps Script URL is not configured."
+      });
     }
 
-    let url = GOOGLE_APPS_SCRIPT_URL;
+    let url =
+      GOOGLE_APPS_SCRIPT_URL;
 
     if (req.method === "GET") {
-      const query = new URLSearchParams(
-        req.query
-      ).toString();
+      const query =
+        new URLSearchParams(
+          req.query || {}
+        ).toString();
 
       if (query) {
         url += `?${query}`;
@@ -22,30 +31,30 @@ export default async function handler(req, res) {
     const options = {
       method: req.method,
       redirect: "follow",
-      headers: {},
+      headers: {}
     };
 
     if (
-      req.method === "POST" ||
-      req.method === "PUT" ||
-      req.method === "PATCH"
+      req.method === "POST"
     ) {
-      options.headers["Content-Type"] =
+      options.headers[
+        "Content-Type"
+      ] =
         "text/plain;charset=utf-8";
 
-      if (typeof req.body === "string") {
-        options.body = req.body;
-      } else {
-        options.body = JSON.stringify(
-          req.body || {}
-        );
-      }
+      options.body =
+        typeof req.body === "string"
+          ? req.body
+          : JSON.stringify(
+              req.body || {}
+            );
     }
 
-    const response = await fetch(
-      url,
-      options
-    );
+    const response =
+      await fetch(
+        url,
+        options
+      );
 
     const text =
       await response.text();
@@ -67,7 +76,7 @@ export default async function handler(req, res) {
     return res.status(500).json({
       success: false,
       message:
-        "Unable to connect to the backend.",
+        "Unable to connect to the backend."
     });
   }
 }

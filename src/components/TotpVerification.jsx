@@ -9,26 +9,27 @@ function TotpVerification({ onVerified }) {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const cleanCode = code.replace(/\D/g, "");
+    setError("");
 
-    if (cleanCode.length !== 6) {
-      setError("Enter a valid 6-digit code.");
+    if (!code.trim()) {
+      setError("Authentication code is required.");
+      return;
+    }
+
+    if (!/^\d{6}$/.test(code)) {
+      setError("Enter a valid 6-digit authentication code.");
       return;
     }
 
     try {
       setLoading(true);
-      setError("");
 
-      const result = await verifyTotp(cleanCode);
+      const result = await verifyTotp(code);
 
-      if (result.success && result.token) {
-        sessionStorage.setItem(
-          "student_portal_token",
-          result.token
-        );
-
-        onVerified(result.token);
+      if (result.success) {
+        if (typeof onVerified === "function") {
+          onVerified();
+        }
       } else {
         setError(
           result.message || "Invalid authentication code."
@@ -36,31 +37,22 @@ function TotpVerification({ onVerified }) {
       }
     } catch (error) {
       console.error("TOTP verification error:", error);
-      setError("Unable to verify the code.");
+
+      setError(
+        error.message || "Unable to verify the code."
+      );
     } finally {
       setLoading(false);
     }
   };
 
-  const handleCodeChange = (event) => {
-    const value = event.target.value
-      .replace(/\D/g, "")
-      .slice(0, 6);
-
-    setCode(value);
-    setError("");
-  };
-
   return (
     <div className="totp-card">
-      <div className="totp-header">
-        <h2>Verify Access</h2>
+      <h2>Verify Access</h2>
 
-        <p>
-          Enter the 6-digit code from your
-          authenticator app.
-        </p>
-      </div>
+      <p>
+        Enter the 6-digit code from your authenticator app.
+      </p>
 
       <form onSubmit={handleSubmit}>
         <div className="form-group">
@@ -72,13 +64,17 @@ function TotpVerification({ onVerified }) {
             id="totp-code"
             type="text"
             inputMode="numeric"
-            autoComplete="one-time-code"
             maxLength={6}
-            value={code}
-            onChange={handleCodeChange}
             placeholder="000000"
-            disabled={loading}
-            autoFocus
+            value={code}
+            onChange={(event) => {
+              const value = event.target.value
+                .replace(/\D/g, "")
+                .slice(0, 6);
+
+              setCode(value);
+            }}
+            autoComplete="one-time-code"
           />
         </div>
 
@@ -90,7 +86,6 @@ function TotpVerification({ onVerified }) {
 
         <button
           type="submit"
-          className="submit-button"
           disabled={loading || code.length !== 6}
         >
           {loading ? "Verifying..." : "Verify"}

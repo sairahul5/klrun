@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { registerStudent } from "../services/googleSheets";
 
-function RegistrationForm({ onRegistrationSuccess }) {
+function RegistrationForm({ onRegistered }) {
   const [formData, setFormData] = useState({
+    universityId: "",
     name: "",
     email: "",
     phone: "",
@@ -10,9 +11,8 @@ function RegistrationForm({ onRegistrationSuccess }) {
   });
 
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
   const [message, setMessage] = useState("");
-  const [messageType, setMessageType] = useState("");
+  const [error, setError] = useState("");
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -21,147 +21,195 @@ function RegistrationForm({ onRegistrationSuccess }) {
       ...previous,
       [name]: value,
     }));
-
-    setSuccess(false);
-    setMessage("");
-    setMessageType("");
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (
-      !formData.name.trim() ||
-      !formData.email.trim() ||
-      !formData.phone.trim() ||
-      !formData.gender
-    ) {
-      setMessage("Please fill all fields.");
-      setMessageType("error");
-      setSuccess(false);
+    setMessage("");
+    setError("");
+
+    if (!formData.universityId.trim()) {
+      setError("University ID is required.");
+      return;
+    }
+
+    if (!formData.name.trim()) {
+      setError("Full name is required.");
+      return;
+    }
+
+    if (!formData.email.trim()) {
+      setError("Email is required.");
+      return;
+    }
+
+    if (!formData.phone.trim()) {
+      setError("Phone number is required.");
+      return;
+    }
+
+    if (!formData.gender) {
+      setError("Gender is required.");
       return;
     }
 
     try {
       setLoading(true);
-      setSuccess(false);
-      setMessage("");
-      setMessageType("");
 
       const result = await registerStudent(formData);
 
       if (result.success) {
-        setSuccess(true);
         setMessage(
-          result.message || "Student registered successfully!"
+          result.message || "Student registered successfully."
         );
-        setMessageType("success");
 
         setFormData({
+          universityId: "",
           name: "",
           email: "",
           phone: "",
           gender: "",
         });
 
-        if (onRegistrationSuccess) {
-          onRegistrationSuccess();
+        if (onRegistered) {
+          onRegistered();
         }
       } else {
-        setSuccess(false);
-        setMessage(
-          result.message || "Registration failed."
+        setError(
+          result.message || "Unable to register student."
         );
-        setMessageType("error");
       }
     } catch (error) {
       console.error("Registration error:", error);
 
-      setSuccess(false);
-      setMessage(
+      setError(
         "Unable to register student. Please try again."
       );
-      setMessageType("error");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="form-card">
-      <form onSubmit={handleSubmit}>
+    <div className="page-content">
+      <h1>Student Registration</h1>
+
+      <p className="page-description">
+        Register a new student by filling in the form below.
+      </p>
+
+      <form
+        className="registration-form"
+        onSubmit={handleSubmit}
+      >
         <div className="form-group">
-          <label>Full Name</label>
+          <label htmlFor="universityId">
+            University ID
+          </label>
 
           <input
+            id="universityId"
+            name="universityId"
             type="text"
+            placeholder="Enter university ID"
+            value={formData.universityId}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="name">
+            Full Name
+          </label>
+
+          <input
+            id="name"
             name="name"
+            type="text"
+            placeholder="Enter student name"
             value={formData.name}
             onChange={handleChange}
-            placeholder="Enter student name"
-            disabled={loading}
           />
         </div>
 
         <div className="form-group">
-          <label>Email</label>
+          <label htmlFor="email">
+            Email
+          </label>
 
           <input
-            type="email"
+            id="email"
             name="email"
+            type="email"
+            placeholder="Enter email"
             value={formData.email}
             onChange={handleChange}
-            placeholder="Enter email"
-            disabled={loading}
           />
         </div>
 
         <div className="form-group">
-          <label>Phone</label>
+          <label htmlFor="phone">
+            Phone
+          </label>
 
           <input
-            type="tel"
+            id="phone"
             name="phone"
+            type="tel"
+            placeholder="Enter phone number"
             value={formData.phone}
             onChange={handleChange}
-            placeholder="Enter phone number"
-            disabled={loading}
           />
         </div>
 
         <div className="form-group">
-          <label>Gender</label>
+          <label htmlFor="gender">
+            Gender
+          </label>
 
           <select
+            id="gender"
             name="gender"
             value={formData.gender}
             onChange={handleChange}
-            disabled={loading}
           >
-            <option value="">Select Gender</option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-            <option value="Other">Other</option>
+            <option value="">
+              Select Gender
+            </option>
+
+            <option value="Male">
+              Male
+            </option>
+
+            <option value="Female">
+              Female
+            </option>
+
+            <option value="Other">
+              Other
+            </option>
           </select>
         </div>
 
+        {error && (
+          <div className="message error">
+            {error}
+          </div>
+        )}
+
         {message && (
-          <p className={`message ${messageType}`}>
+          <div className="message success">
             {message}
-          </p>
+          </div>
         )}
 
         <button
           type="submit"
-          className={`submit-button ${
-            success ? "success-button" : ""
-          }`}
-          disabled={loading || success}
+          disabled={loading}
         >
           {loading
             ? "Registering..."
-            : success
-            ? "Registered"
             : "Register Student"}
         </button>
       </form>
