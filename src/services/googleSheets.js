@@ -1,7 +1,8 @@
+const API_URL =
+  "https://script.google.com/macros/s/AKfycbwgP1EFNB2KmKkT08ryLEfV473nyKLJgj1y5ciHpoMk5r-O6pGT7ek4qgtdjGfG3D5sCw/exec";
 
-const API_URL = "/api/exec";
-
-const TOKEN_KEY = "student_portal_token";
+const TOKEN_KEY =
+  "student_portal_token";
 
 export async function registerStudent(studentData) {
   const response = await fetch(API_URL, {
