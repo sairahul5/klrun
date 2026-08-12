@@ -6,13 +6,29 @@ import RegistrationForm from "./components/RegistrationForm";
 import StudentTable from "./components/StudentTable";
 import TotpVerification from "./components/TotpVerification";
 
+const TOKEN_KEY =
+  "student_portal_token";
+
 function App() {
-  const [page, setPage] = useState("register");
-  const [refresh, setRefresh] = useState(0);
-  const [authenticated, setAuthenticated] = useState(false);
+  const [page, setPage] =
+    useState("register");
+
+  const [refresh, setRefresh] =
+    useState(0);
+
+  const [authenticated, setAuthenticated] =
+    useState(
+      () =>
+        !!sessionStorage.getItem(
+          TOKEN_KEY
+        )
+    );
 
   const handleRegistered = () => {
-    setRefresh((previous) => previous + 1);
+    setRefresh(
+      (previous) =>
+        previous + 1
+    );
   };
 
   const handleAuthenticationSuccess = () => {
@@ -20,10 +36,18 @@ function App() {
   };
 
   const handleAuthenticationExpired = () => {
+    sessionStorage.removeItem(
+      TOKEN_KEY
+    );
+
     setAuthenticated(false);
   };
 
   const handleLogout = () => {
+    sessionStorage.removeItem(
+      TOKEN_KEY
+    );
+
     setAuthenticated(false);
   };
 
@@ -37,9 +61,12 @@ function App() {
       />
 
       <main className="app-container">
+
         {page === "register" && (
           <RegistrationForm
-            onRegistered={handleRegistered}
+            onRegistered={
+              handleRegistered
+            }
           />
         )}
 
@@ -47,32 +74,48 @@ function App() {
           <>
             {!authenticated ? (
               <div className="page-content">
-                <h1>Student Access</h1>
+
+                <h1>
+                  Student Access
+                </h1>
 
                 <p className="page-description">
-                  Authentication is required to view student data.
+                  Authentication is
+                  required to view
+                  student data.
                 </p>
 
                 <TotpVerification
-                  onVerified={handleAuthenticationSuccess}
+                  onVerified={
+                    handleAuthenticationSuccess
+                  }
                 />
+
               </div>
             ) : (
               <div>
+
                 <div className="students-heading">
-                  <h1>Registered Students</h1>
+
+                  <h1>
+                    Registered Students
+                  </h1>
 
                   <p>
-                    View and manage registered students.
+                    View and manage
+                    registered students.
                   </p>
 
                   <button
                     type="button"
                     className="logout-button"
-                    onClick={handleLogout}
+                    onClick={
+                      handleLogout
+                    }
                   >
                     Log Out
                   </button>
+
                 </div>
 
                 <StudentTable
@@ -81,10 +124,12 @@ function App() {
                     handleAuthenticationExpired
                   }
                 />
+
               </div>
             )}
           </>
         )}
+
       </main>
     </>
   );

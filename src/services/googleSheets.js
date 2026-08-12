@@ -3,16 +3,23 @@ const API_URL = "/api/exec";
 const TOKEN_KEY =
   "student_portal_token";
 
+
+/* ================================
+   REGISTER STUDENT
+================================ */
+
 export async function registerStudent(
   studentData
 ) {
   const response =
     await fetch(API_URL, {
       method: "POST",
+
       headers: {
         "Content-Type":
           "text/plain;charset=utf-8"
       },
+
       body: JSON.stringify({
         action: "register",
 
@@ -41,6 +48,11 @@ export async function registerStudent(
 
   return await response.json();
 }
+
+
+/* ================================
+   GET STUDENTS
+================================ */
 
 export async function getStudents() {
   const token =
@@ -89,6 +101,11 @@ export async function getStudents() {
   return result;
 }
 
+
+/* ================================
+   DELETE STUDENT
+================================ */
+
 export async function deleteStudent(
   id
 ) {
@@ -108,10 +125,12 @@ export async function deleteStudent(
   const response =
     await fetch(API_URL, {
       method: "POST",
+
       headers: {
         "Content-Type":
           "text/plain;charset=utf-8"
       },
+
       body: JSON.stringify({
         action: "delete",
         id: id,

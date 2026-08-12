@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { verifyTotp } from "../services/totp";
 
+const TOKEN_KEY = "student_portal_token";
+
 function TotpVerification({ onVerified }) {
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
@@ -26,21 +28,39 @@ function TotpVerification({ onVerified }) {
 
       const result = await verifyTotp(code);
 
-      if (result.success) {
+      console.log("TOTP result:", result);
+
+      if (result.success && result.token) {
+        sessionStorage.setItem(
+          TOKEN_KEY,
+          result.token
+        );
+
+        setCode("");
+
         if (typeof onVerified === "function") {
           onVerified();
         }
-      } else {
-        setError(
-          result.message || "Invalid authentication code."
-        );
+
+        return;
       }
-    } catch (error) {
-      console.error("TOTP verification error:", error);
 
       setError(
-        error.message || "Unable to verify the code."
+        result.message ||
+          "Invalid authentication code."
       );
+
+    } catch (error) {
+      console.error(
+        "TOTP verification error:",
+        error
+      );
+
+      setError(
+        error.message ||
+          "Unable to verify the code."
+      );
+
     } finally {
       setLoading(false);
     }
@@ -51,7 +71,8 @@ function TotpVerification({ onVerified }) {
       <h2>Verify Access</h2>
 
       <p>
-        Enter the 6-digit code from your authenticator app.
+        Enter the 6-digit code from your
+        authenticator app.
       </p>
 
       <form onSubmit={handleSubmit}>
@@ -68,13 +89,16 @@ function TotpVerification({ onVerified }) {
             placeholder="000000"
             value={code}
             onChange={(event) => {
-              const value = event.target.value
-                .replace(/\D/g, "")
-                .slice(0, 6);
+              const value =
+                event.target.value
+                  .replace(/\D/g, "")
+                  .slice(0, 6);
 
               setCode(value);
+              setError("");
             }}
             autoComplete="one-time-code"
+            disabled={loading}
           />
         </div>
 
@@ -86,9 +110,14 @@ function TotpVerification({ onVerified }) {
 
         <button
           type="submit"
-          disabled={loading || code.length !== 6}
+          disabled={
+            loading ||
+            code.length !== 6
+          }
         >
-          {loading ? "Verifying..." : "Verify"}
+          {loading
+            ? "Verifying..."
+            : "Verify"}
         </button>
       </form>
     </div>
