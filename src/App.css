@@ -219,28 +219,26 @@ select {
    ========================================= */
 
 .brand-button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
   border: 0;
-
   background: transparent;
-
   color: #1f2937;
 
   font-size: 21px;
-
   font-weight: 700;
 
   cursor: pointer;
-
-  padding: 10px 14px;
-
-  border-radius: 12px;
-
-  transition:
-    background 0.25s ease,
-    box-shadow 0.25s ease,
-    transform 0.25s ease;
 }
 
+.navbar-logo {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  display: block;
+}
 .brand-button:hover {
   background:
     rgba(255, 255, 255, 0.25);

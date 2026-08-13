@@ -8,12 +8,17 @@ function Navbar({
       <div className="navbar-inner">
 
         <button
-          type="button"
-          className="brand-button"
-          onClick={() => setPage("register")}
-        >
-          KL RUNS
-        </button>
+  type="button"
+  className="brand-button"
+  onClick={() => setPage("register")}
+>
+  <img
+    src="/image.png"
+    alt="KL RUNS"
+    className="navbar-logo"
+  />
+  <span>KL RUNS</span>
+</button>
 
         <div className="nav-links">
 
