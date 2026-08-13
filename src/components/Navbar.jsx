@@ -14,7 +14,7 @@ function Navbar({
             setPage("register")
           }
         >
-          KL RUN
+          KL RUNS
         </button>
 
 
