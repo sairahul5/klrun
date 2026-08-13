@@ -18,13 +18,13 @@ const members = [
   {
     name: "Rahul",
     image: "/rahul.jpeg",
-    title: "KL WEB",
+    title: "WEB",
     description:
-      "brings ideas to life through thoughtful design, visual systems and creative work for KL RUNS.",
+      "Builds and maintains the digital side of KL RUNS.",
     shortDescription:
-      "Design, graphics and visual direction for KL RUNS.",
+      "Web development, technology and digital systems for KL RUNS.",
     details: [
-      "Graphic Design",
+      "Web Development",
       "Visual Design",
       "Creative Direction",
       "KL DESIGN",
@@ -34,13 +34,13 @@ const members = [
   {
     name: "Ashok",
     image: "/ashok.jpg",
-    title: "KL DESIGN",
+    title: "DESIGN",
     description:
-      "creates digital content and visual stories that connect people with the energy and identity of KL RUNS.",
+      "Shapes the visual identity and creative direction of KL RUNS through design, content and storytelling.",
     shortDescription:
-      "Creative media, digital content and visual storytelling for KL RUNS.",
+      "Design, graphics and visual direction for KL RUNS.",
     details: [
-      "Media",
+      "Graphic Design",
       "Content Creation",
       "Storytelling",
       "KL MEDIA",
@@ -48,31 +48,31 @@ const members = [
   },
 
   {
-    name: "Member 04",
+    name: "Sunny",
     image: "/member4.jpg",
-    title: "KL EVENTS",
+    title: "FINANCE",
     description:
-      "helps bring KL RUNS events together through planning, coordination and experiences built around the community.",
+      "Manages finances, budgets, and financial planning.",
     shortDescription:
       "Event planning, coordination and execution for KL RUNS.",
     details: [
       "Event Planning",
       "Coordination",
-      "Operations",
+      "Finance and Budgeting",
       "KL EVENTS",
     ],
   },
 
   {
-    name: "Member 05",
+    name: "T-Rex",
     image: "/member5.jpg",
-    title: "KL TECH",
+    title: "Exectuive",
     description:
-      "builds the digital side of KL RUNS through web applications, technology and simple systems that support the team.",
+      "Turns ideas into action and gets things done.",
     shortDescription:
       "Web development, technology and digital systems for KL RUNS.",
     details: [
-      "Web Development",
+      "Coordination",
       "Technology",
       "Digital Systems",
       "KL TECH",
@@ -80,15 +80,31 @@ const members = [
   },
 
   {
-    name: "Member 06",
-    image: "/member6.jpg",
-    title: "KL CREATIVE",
+    name: "Siddhu",
+    image: "/siddhu.jpeg",
+    title: "CORE",
     description:
-      "brings ideas, creativity and visual thinking together to help shape the identity and direction of KL RUNS.",
+      "Handles core operations and keeps the team moving.",
     shortDescription:
       "Creative direction, ideas and content for KL RUNS.",
     details: [
       "Creative",
+      "Content",
+      "Ideas",
+      "KL CREATIVE",
+    ],
+  },
+
+  {
+    name: "Swaroop",
+    image: "/swaroop.jpeg",
+    title: "Magement",
+    description:
+      "Builds connections and manages team relationships.",
+    shortDescription:
+      "Creative direction, ideas and content for KL RUNS.",
+    details: [
+      "Management",
       "Content",
       "Ideas",
       "KL CREATIVE",
