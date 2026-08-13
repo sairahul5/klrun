@@ -49,7 +49,7 @@ const members = [
 
   {
     name: "Sunny",
-    image: "/member4.jpg",
+    image: "/sunny.jpeg",
     title: "FINANCE",
     description:
       "Manages finances, budgets, and financial planning.",
