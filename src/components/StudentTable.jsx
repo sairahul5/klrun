@@ -340,19 +340,12 @@ function StudentTable({
   if (loading) {
     return (
       <div className="table-card loading-card">
-        <div className="spinner">
-          <div className="spinner-blade" />
-          <div className="spinner-blade" />
-          <div className="spinner-blade" />
-          <div className="spinner-blade" />
-          <div className="spinner-blade" />
-          <div className="spinner-blade" />
-          <div className="spinner-blade" />
-          <div className="spinner-blade" />
-          <div className="spinner-blade" />
-          <div className="spinner-blade" />
-          <div className="spinner-blade" />
-          <div className="spinner-blade" />
+        <div className="loader">
+          <p>loading</p>
+          <div className="words">
+            <span className="word">Student</span>
+            <span className="word">Data</span>
+          </div>
         </div>
       </div>
     );

@@ -952,6 +952,99 @@ td {
 }
 
 /* =========================================
+   LOADING TEXT (word cycler, no container)
+   ========================================= */
+
+.loader {
+  --bg-color: #ffffff;
+
+  color: rgb(124, 124, 124);
+
+  font-family: "Poppins", sans-serif;
+
+  font-weight: 500;
+
+  font-size: 25px;
+
+  line-height: 40px;
+
+  box-sizing: content-box;
+
+  height: 40px;
+
+  display: flex;
+
+  align-items: center;
+}
+
+.loader p {
+  margin: 0;
+
+  line-height: 40px;
+}
+
+.words {
+  height: 40px;
+
+  line-height: 40px;
+
+  overflow: hidden;
+
+  position: relative;
+}
+
+.words::after {
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  background: linear-gradient(
+    var(--bg-color) 10%,
+    transparent 30%,
+    transparent 70%,
+    var(--bg-color) 90%
+  );
+
+  z-index: 20;
+}
+
+.word {
+  display: block;
+
+  height: 40px;
+
+  line-height: 40px;
+
+  padding-left: 6px;
+
+  color: #070707;
+
+  -webkit-animation: spin_4991 4s ease-in-out infinite;
+  animation: spin_4991 4s ease-in-out infinite;
+}
+
+@keyframes spin_4991 {
+  0%,
+  45% {
+    -webkit-transform: translateY(0%);
+    transform: translateY(0%);
+  }
+
+  50%,
+  95% {
+    -webkit-transform: translateY(-100%);
+    transform: translateY(-100%);
+  }
+
+  100% {
+    -webkit-transform: translateY(0%);
+    transform: translateY(0%);
+  }
+}
+
+/* =========================================
    LOADING SPINNER
    ========================================= */
 

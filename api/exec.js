@@ -1,13 +1,27 @@
 const GOOGLE_APPS_SCRIPT_URL =
   process.env.GOOGLE_APPS_SCRIPT_URL;
 
-export default async function handler(req, res) {
+export default async function handler(
+  req,
+  res
+) {
   try {
     if (!GOOGLE_APPS_SCRIPT_URL) {
       return res.status(500).json({
         success: false,
         message:
-          "GOOGLE_APPS_SCRIPT_URL is not configured."
+          "GOOGLE_APPS_SCRIPT_URL is not configured.",
+      });
+    }
+
+    if (
+      req.method !== "GET" &&
+      req.method !== "POST"
+    ) {
+      return res.status(405).json({
+        success: false,
+        message:
+          "Method not allowed.",
       });
     }
 
@@ -28,7 +42,7 @@ export default async function handler(req, res) {
     const options = {
       method: req.method,
       redirect: "follow",
-      headers: {}
+      headers: {},
     };
 
     if (req.method === "POST") {
@@ -64,12 +78,11 @@ export default async function handler(req, res) {
       .send(text);
 
   } catch (error) {
-
     return res.status(500).json({
       success: false,
       message:
         error.message ||
-        "Backend connection failed."
+        "Backend connection failed.",
     });
   }
 }
