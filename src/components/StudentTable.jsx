@@ -608,4 +608,6 @@ function StudentTable({
   );
 }
 
+//exporting the student table
+
 export default StudentTable;
