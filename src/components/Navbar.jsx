@@ -6,7 +6,9 @@ function Navbar({
   return (
     <nav className="navbar">
       <div className="navbar-inner">
+
         <button
+          type="button"
           className="brand-button"
           onClick={() =>
             setPage("register")
@@ -15,8 +17,11 @@ function Navbar({
           KL RUN
         </button>
 
+
         <div className="nav-links">
+
           <button
+            type="button"
             className={
               page === "register"
                 ? "nav-button active"
@@ -29,7 +34,9 @@ function Navbar({
             Register
           </button>
 
+
           <button
+            type="button"
             className={
               page === "students"
                 ? "nav-button active"
@@ -41,7 +48,9 @@ function Navbar({
           >
             Students
           </button>
+
         </div>
+
       </div>
     </nav>
   );

@@ -1,65 +1,380 @@
+* {
+  box-sizing: border-box;
+}
+
+html {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+
+  color: #1f2937;
+
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
+
+  background:
+    radial-gradient(
+      circle at 15% 10%,
+      rgba(255, 255, 255, 0.95),
+      transparent 32%
+    ),
+    radial-gradient(
+      circle at 85% 20%,
+      rgba(255, 255, 255, 0.8),
+      transparent 30%
+    ),
+    #f3f6fa;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+#root {
+  min-height: 100vh;
+  position: relative;
+}
+
+/* =========================================
+   BACKGROUND GRID
+   ========================================= */
+
+#root::before {
+  content: "";
+
+  position: fixed;
+  inset: 0;
+
+  pointer-events: none;
+  z-index: 0;
+
+  background-image:
+    linear-gradient(
+      rgba(0, 0, 0, 0.055) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.055) 1px,
+      transparent 1px
+    );
+
+  background-size: 45px 45px;
+}
+
+#root > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* =========================================
+   MAIN APP CONTAINER
+   ========================================= */
+
 .app-container {
   width: min(1150px, calc(100% - 32px));
+
   margin: 0 auto;
+
   padding: 48px 0 60px;
 }
 
+/* =========================================
+   STATIC LIQUID GLASS NAVBAR
+   ========================================= */
+
 .navbar {
-  width: 100%;
-  background: #ffffff;
-  border-bottom: 1px solid #e5e7eb;
+  position: static;
+
+  width: calc(100% - 32px);
+  max-width: 1150px;
+
+  margin: 16px auto 0;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.28) 0%,
+      rgba(255, 255, 255, 0.12) 35%,
+      rgba(255, 255, 255, 0.20) 65%,
+      rgba(255, 255, 255, 0.30) 100%
+    );
+
+  backdrop-filter:
+    blur(28px)
+    saturate(190%)
+    brightness(1.08);
+
+  -webkit-backdrop-filter:
+    blur(28px)
+    saturate(190%)
+    brightness(1.08);
+
+  border: 1px solid rgba(255, 255, 255, 0.72);
+
+  border-radius: 20px;
+
+  box-shadow:
+    0 24px 55px rgba(15, 23, 42, 0.10),
+    0 10px 25px rgba(15, 23, 42, 0.06),
+
+    inset 0 1px 0 rgba(255, 255, 255, 0.98),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.28),
+    inset 1px 0 0 rgba(255, 255, 255, 0.55),
+    inset -1px 0 0 rgba(255, 255, 255, 0.32);
+
+  overflow: hidden;
 }
 
+/* =========================================
+   GLASS REFLECTION
+   ========================================= */
+
+.navbar::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: 4%;
+  right: 4%;
+
+  height: 55%;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.60) 0%,
+      rgba(255, 255, 255, 0.25) 35%,
+      rgba(255, 255, 255, 0.02) 100%
+    );
+
+  border-radius: 0 0 50% 50%;
+
+  pointer-events: none;
+
+  z-index: 0;
+}
+
+/* =========================================
+   GLASS TOP HIGHLIGHT
+   ========================================= */
+
+.navbar::after {
+  content: "";
+
+  position: absolute;
+
+  top: 1px;
+
+  left: 10%;
+  right: 10%;
+
+  height: 1px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 1),
+      rgba(255, 255, 255, 0.85),
+      rgba(255, 255, 255, 1),
+      transparent
+    );
+
+  opacity: 0.95;
+
+  pointer-events: none;
+
+  z-index: 3;
+}
+
+/* =========================================
+   NAVBAR INNER
+   ========================================= */
+
 .navbar-inner {
-  width: min(1150px, calc(100% - 32px));
-  min-height: 60px;
+  position: relative;
+
+  z-index: 2;
+
+  width: 100%;
+
+  min-height: 64px;
+
+  padding: 0 14px 0 22px;
+
   margin: 0 auto;
 
   display: flex;
+
   align-items: center;
+
   justify-content: space-between;
 }
 
+/* =========================================
+   BRAND
+   ========================================= */
+
 .brand-button {
   border: 0;
+
   background: transparent;
+
   color: #1f2937;
 
   font-size: 21px;
+
   font-weight: 700;
 
   cursor: pointer;
+
+  padding: 10px 14px;
+
+  border-radius: 12px;
+
+  transition:
+    background 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.25s ease;
 }
+
+.brand-button:hover {
+  background:
+    rgba(255, 255, 255, 0.25);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.70);
+
+  transform: translateY(-1px);
+}
+
+/* =========================================
+   NAV LINKS
+   ========================================= */
 
 .nav-links {
   display: flex;
-  gap: 8px;
+
+  align-items: center;
+
+  gap: 6px;
 }
 
+/* =========================================
+   NAV BUTTON
+   ========================================= */
+
 .nav-button {
-  border: 0;
+  position: relative;
+
+  border: 1px solid transparent;
+
   background: transparent;
 
-  color: #6b7280;
+  color: #667085;
 
-  padding: 10px 16px;
-  border-radius: 9px;
+  padding: 10px 17px;
+
+  border-radius: 12px;
+
+  font-size: 14px;
 
   font-weight: 600;
+
   cursor: pointer;
+
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.2s ease;
 }
 
 .nav-button:hover {
-  background: #f3f4f6;
+  background:
+    rgba(255, 255, 255, 0.32);
+
+  border-color:
+    rgba(255, 255, 255, 0.55);
+
+  color: #1f2937;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.80),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.15),
+    0 4px 14px rgba(15, 23, 42, 0.05);
+
+  transform: translateY(-1px);
 }
 
+/* =========================================
+   ACTIVE NAV BUTTON
+   ========================================= */
+
 .nav-button.active {
-  background: #111827;
+  color: #ffffff;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(17, 24, 39, 0.90),
+      rgba(31, 41, 55, 0.72)
+    );
+
+  border: 1px solid rgba(255, 255, 255, 0.30);
+
+  backdrop-filter:
+    blur(14px)
+    saturate(170%);
+
+  -webkit-backdrop-filter:
+    blur(14px)
+    saturate(170%);
+
+  box-shadow:
+    0 8px 18px rgba(15, 23, 42, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.30),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+.nav-button.active:hover {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(31, 41, 55, 0.94),
+      rgba(17, 24, 39, 0.82)
+    );
+
   color: #ffffff;
 }
 
+/* =========================================
+   PAGE CONTENT
+   ========================================= */
+
 .page-content {
+  width: 100%;
+
   max-width: 600px;
+
+  margin: 0 auto;
 }
 
 .page-content h1,
@@ -67,7 +382,9 @@
   margin: 0 0 4px;
 
   font-size: 32px;
+
   line-height: 1.2;
+
   font-weight: 700;
 }
 
@@ -76,12 +393,43 @@
   margin: 0;
 
   color: #667085;
+
   font-size: 16px;
 }
+
+/* =========================================
+   STUDENTS HEADING
+   ========================================= */
 
 .students-heading {
   margin-bottom: 28px;
 }
+
+/* =========================================
+   REGISTER PAGE
+   ========================================= */
+
+.register-page {
+  width: 100%;
+
+  min-height: calc(100vh - 60px);
+
+  display: flex;
+
+  justify-content: center;
+}
+
+.register-container {
+  width: 100%;
+
+  max-width: 600px;
+
+  margin: 40px auto;
+}
+
+/* =========================================
+   REGISTRATION FORM
+   ========================================= */
 
 .registration-form,
 .totp-card {
@@ -89,31 +437,46 @@
 
   padding: 26px;
 
-  background: #ffffff;
+  background:
+    rgba(255, 255, 255, 0.92);
 
   border: 1px solid #e1e5eb;
+
   border-radius: 16px;
 
   box-shadow:
     0 2px 6px rgba(16, 24, 40, 0.04);
 }
 
+.registration-form {
+  width: 100%;
+}
+
 .totp-card {
+  width: 100%;
+
   max-width: 500px;
 }
 
 .totp-card h2 {
   margin: 0 0 6px;
+
   font-size: 23px;
 }
 
 .totp-card p {
   margin: 0 0 24px;
+
   color: #667085;
 }
 
+/* =========================================
+   FORM GROUP
+   ========================================= */
+
 .form-group {
   display: flex;
+
   flex-direction: column;
 
   margin-bottom: 16px;
@@ -125,6 +488,7 @@
   color: #344054;
 
   font-size: 14px;
+
   font-weight: 600;
 }
 
@@ -138,12 +502,18 @@
   padding: 10px 13px;
 
   border: 1px solid #d0d5dd;
+
   border-radius: 8px;
 
   background: #ffffff;
+
   color: #1f2937;
 
   outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .form-group input:focus,
@@ -152,9 +522,12 @@
   border-color: #111827;
 
   box-shadow:
-    0 0 0 3px
-    rgba(17, 24, 39, 0.08);
+    0 0 0 3px rgba(17, 24, 39, 0.08);
 }
+
+/* =========================================
+   REGISTER / VERIFY BUTTON
+   ========================================= */
 
 .registration-form > button,
 .totp-card > button {
@@ -165,14 +538,20 @@
   margin-top: 8px;
 
   border: 0;
+
   border-radius: 8px;
 
   background: #111827;
+
   color: #ffffff;
 
   font-weight: 600;
 
   cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    opacity 0.2s ease;
 }
 
 .registration-form > button:hover,
@@ -183,8 +562,57 @@
 .registration-form > button:disabled,
 .totp-card > button:disabled {
   opacity: 0.6;
+
   cursor: not-allowed;
 }
+
+/* =========================================
+   TOTP FORM BUTTON
+   ========================================= */
+
+.totp-card form button {
+  width: 100%;
+
+  min-height: 44px;
+
+  margin-top: 8px;
+
+  padding: 10px 16px;
+
+  border: none;
+
+  border-radius: 8px;
+
+  background: #111827;
+
+  color: #ffffff;
+
+  font-size: 15px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.totp-card form button:hover {
+  background: #1f2937;
+}
+
+.totp-card form button:disabled {
+  background: #d1d5db;
+
+  color: #6b7280;
+
+  cursor: not-allowed;
+}
+
+/* =========================================
+   MESSAGES
+   ========================================= */
 
 .message {
   margin: 14px 0;
@@ -198,35 +626,51 @@
 
 .message.error {
   background: #fff1f1;
+
   border: 1px solid #fecaca;
+
   color: #dc2626;
 }
 
 .message.success {
   background: #ecfdf3;
+
   border: 1px solid #bbf7d0;
+
   color: #15803d;
 }
 
+/* =========================================
+   LOGOUT BUTTON
+   ========================================= */
+
 .logout-button {
   display: flex;
+
   align-items: center;
+
   justify-content: center;
+
   outline: none;
+
   cursor: pointer;
 
   width: 150px;
+
   height: 50px;
+
   margin-top: 10px;
 
-  background-image: linear-gradient(
-    to top,
-    #d8d9db 0%,
-    #ffffff 80%,
-    #fdfdfd 100%
-  );
+  background-image:
+    linear-gradient(
+      to top,
+      #d8d9db 0%,
+      #ffffff 80%,
+      #fdfdfd 100%
+    );
 
   border-radius: 30px;
+
   border: 1px solid #8f9092;
 
   transition: all 0.2s ease;
@@ -239,7 +683,9 @@
     sans-serif;
 
   font-size: 14px;
+
   font-weight: 600;
+
   color: #606060;
 
   text-shadow: 0 1px #ffffff;
@@ -274,12 +720,17 @@
     inset 0 0 30px #aaaaaa;
 }
 
+/* =========================================
+   STUDENT TABLE
+   ========================================= */
+
 .table-card {
   overflow: hidden;
 
   background: #ffffff;
 
   border: 1px solid #e1e5eb;
+
   border-radius: 15px;
 }
 
@@ -289,7 +740,9 @@
   padding: 22px 24px;
 
   display: flex;
+
   align-items: center;
+
   justify-content: space-between;
 
   gap: 20px;
@@ -307,12 +760,15 @@
   margin: 0;
 
   color: #667085;
+
   font-size: 14px;
 }
 
 .table-actions {
   display: flex;
+
   align-items: center;
+
   gap: 12px;
 }
 
@@ -320,26 +776,38 @@
   width: 280px;
 }
 
+/* =========================================
+   REFRESH BUTTON
+   ========================================= */
+
 .refresh-button {
   min-height: 44px;
 
   padding: 0 20px;
 
   display: inline-flex;
+
   align-items: center;
+
   justify-content: center;
 
   gap: 9px;
 
   border: 0;
+
   border-radius: 8px;
 
   background: #222222;
+
   color: #ffffff;
 
   font-weight: 600;
 
   cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    opacity 0.2s ease;
 }
 
 .refresh-button:hover {
@@ -348,16 +816,19 @@
 
 .refresh-button:disabled {
   opacity: 0.7;
+
   cursor: not-allowed;
 }
 
 .refresh-icon {
   width: 18px;
+
   height: 18px;
 }
 
 .refresh-icon.spinning {
-  animation: refresh-spin 0.8s linear infinite;
+  animation:
+    refresh-spin 0.8s linear infinite;
 }
 
 @keyframes refresh-spin {
@@ -370,13 +841,19 @@
   }
 }
 
+/* =========================================
+   TABLE
+   ========================================= */
+
 .table-wrapper {
   width: 100%;
+
   overflow-x: auto;
 }
 
 table {
   width: 100%;
+
   border-collapse: collapse;
 }
 
@@ -399,6 +876,7 @@ th {
   color: #667085;
 
   font-size: 13px;
+
   font-weight: 600;
 }
 
@@ -410,6 +888,7 @@ td {
 
 .sortable {
   cursor: pointer;
+
   user-select: none;
 }
 
@@ -417,24 +896,38 @@ td {
   background: #f1f5f9;
 }
 
+/* =========================================
+   DELETE BUTTON
+   ========================================= */
+
 .delete-button {
   padding: 8px 14px;
 
   border: 0;
+
   border-radius: 7px;
 
   background: #fee2e2;
+
   color: #dc2626;
 
   font-size: 13px;
+
   font-weight: 600;
 
   cursor: pointer;
+
+  transition:
+    background 0.2s ease;
 }
 
 .delete-button:hover {
   background: #fecaca;
 }
+
+/* =========================================
+   EMPTY STATE
+   ========================================= */
 
 .empty-state {
   padding: 40px 24px;
@@ -444,18 +937,29 @@ td {
   color: #667085;
 }
 
+/* =========================================
+   LOADING CARD
+   ========================================= */
+
 .loading-card {
   min-height: 300px;
 
   display: flex;
+
   align-items: center;
+
   justify-content: center;
 }
+
+/* =========================================
+   LOADING SPINNER
+   ========================================= */
 
 .spinner {
   position: relative;
 
   width: 40px;
+
   height: 40px;
 }
 
@@ -463,9 +967,11 @@ td {
   position: absolute;
 
   left: 18px;
+
   bottom: 0;
 
   width: 4px;
+
   height: 11px;
 
   border-radius: 4px;
@@ -474,7 +980,8 @@ td {
 
   transform-origin: center -9px;
 
-  animation: spinner-fade 1s infinite linear;
+  animation:
+    spinner-fade 1s infinite linear;
 }
 
 .spinner-blade:nth-child(1) {
@@ -547,14 +1054,47 @@ td {
   }
 }
 
+/* =========================================
+   MOBILE
+   ========================================= */
+
 @media (max-width: 700px) {
   .app-container {
     width: calc(100% - 24px);
+
     padding-top: 30px;
   }
 
-  .navbar-inner {
+  .navbar {
+    position: static;
+
     width: calc(100% - 24px);
+
+    margin: 10px auto 0;
+
+    border-radius: 16px;
+  }
+
+  .navbar-inner {
+    min-height: 58px;
+
+    padding: 0 10px 0 12px;
+  }
+
+  .brand-button {
+    font-size: 19px;
+
+    padding: 8px 10px;
+  }
+
+  .nav-links {
+    gap: 3px;
+  }
+
+  .nav-button {
+    padding: 9px 12px;
+
+    font-size: 13px;
   }
 
   .page-content h1,
@@ -562,13 +1102,26 @@ td {
     font-size: 27px;
   }
 
+  .register-container {
+    width: 100%;
+
+    margin: 25px auto;
+  }
+
+  .registration-form,
+  .totp-card {
+    padding: 20px;
+  }
+
   .table-header {
     align-items: stretch;
+
     flex-direction: column;
   }
 
   .table-actions {
     width: 100%;
+
     flex-direction: column;
   }
 
@@ -577,39 +1130,44 @@ td {
     width: 100%;
   }
 
-  .registration-form,
-  .totp-card {
-    padding: 20px;
+  .logout-button {
+    width: 130px;
+
+    height: 45px;
   }
 }
-.totp-card form button {
-  width: 100%;
-  min-height: 44px;
 
-  margin-top: 8px;
-  padding: 10px 16px;
+/* =========================================
+   FORCE NAVBAR TO BE STATIC
+   ========================================= */
 
-  border: none;
-  border-radius: 8px;
+.navbar {
+  position: static !important;
+  top: auto !important;
+  bottom: auto !important;
 
-  background: #111827;
-  color: #ffffff;
+  left: auto !important;
+  right: auto !important;
 
-  font-size: 15px;
-  font-weight: 600;
+  transform: none !important;
 
-  cursor: pointer;
+  z-index: 10;
 
-  transition: background 0.2s ease;
+  margin: 16px auto 0;
 }
 
-.totp-card form button:hover {
-  background: #1f2937;
-}
+@media (max-width: 700px) {
+  .navbar {
+    position: static !important;
 
-.totp-card form button:disabled {
-  background: #d1d5db;
-  color: #6b7280;
+    top: auto !important;
+    bottom: auto !important;
 
-  cursor: not-allowed;
+    left: auto !important;
+    right: auto !important;
+
+    transform: none !important;
+
+    margin: 10px auto 0;
+  }
 }

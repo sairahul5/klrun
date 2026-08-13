@@ -34,9 +34,7 @@ export default async function handler(
       headers: {}
     };
 
-    if (
-      req.method === "POST"
-    ) {
+    if (req.method === "POST") {
       options.headers[
         "Content-Type"
       ] =
@@ -67,12 +65,8 @@ export default async function handler(
     return res
       .status(response.status)
       .send(text);
-  } catch (error) {
-    console.error(
-      "Apps Script proxy error:",
-      error
-    );
 
+  } catch (error) {
     return res.status(500).json({
       success: false,
       message:

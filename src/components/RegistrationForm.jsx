@@ -1,109 +1,177 @@
 import { useState } from "react";
 import { registerStudent } from "../services/googleSheets";
 
-function RegistrationForm({ onRegistered }) {
-  const [formData, setFormData] = useState({
-    universityId: "",
-    name: "",
-    email: "",
-    phone: "",
-    gender: "",
-  });
+function RegistrationForm({
+  onRegistered
+}) {
+  const [formData, setFormData] =
+    useState({
+      universityId: "",
+      name: "",
+      email: "",
+      phone: "",
+      gender: ""
+    });
 
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
+  const [loading, setLoading] =
+    useState(false);
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
+  const [message, setMessage] =
+    useState("");
 
-    setFormData((previous) => ({
-      ...previous,
-      [name]: value,
-    }));
+  const [error, setError] =
+    useState("");
+
+
+  const handleChange = (
+    event
+  ) => {
+    const {
+      name,
+      value
+    } = event.target;
+
+    setFormData(
+      (previous) => ({
+        ...previous,
+        [name]: value
+      })
+    );
   };
 
-  const handleSubmit = async (event) => {
+
+  const handleSubmit = async (
+    event
+  ) => {
     event.preventDefault();
+
+    if (loading) {
+      return;
+    }
 
     setMessage("");
     setError("");
 
-    if (!formData.universityId.trim()) {
-      setError("University ID is required.");
+
+    if (
+      !formData.universityId.trim()
+    ) {
+      setError(
+        "University ID is required."
+      );
       return;
     }
 
-    if (!formData.name.trim()) {
-      setError("Full name is required.");
+
+    if (
+      !formData.name.trim()
+    ) {
+      setError(
+        "Full name is required."
+      );
       return;
     }
 
-    if (!formData.email.trim()) {
-      setError("Email is required.");
+
+    if (
+      !formData.email.trim()
+    ) {
+      setError(
+        "Email is required."
+      );
       return;
     }
 
-    if (!formData.phone.trim()) {
-      setError("Phone number is required.");
+
+    if (
+      !formData.phone.trim()
+    ) {
+      setError(
+        "Phone number is required."
+      );
       return;
     }
+
 
     if (!formData.gender) {
-      setError("Gender is required.");
+      setError(
+        "Gender is required."
+      );
       return;
     }
+
 
     try {
       setLoading(true);
 
-      const result = await registerStudent(formData);
+      const result =
+        await registerStudent(
+          formData
+        );
+
 
       if (result.success) {
+
         setMessage(
-          result.message || "Student registered successfully."
+          result.message ||
+            "Student registered successfully."
         );
+
 
         setFormData({
           universityId: "",
           name: "",
           email: "",
           phone: "",
-          gender: "",
+          gender: ""
         });
+
 
         if (onRegistered) {
           onRegistered();
         }
+
       } else {
+
         setError(
-          result.message || "Unable to register student."
+          result.message ||
+            "Unable to register student."
         );
       }
+
     } catch (error) {
-      console.error("Registration error:", error);
 
       setError(
-        "Unable to register student. Please try again."
+        error.message ||
+          "Unable to register student. Please try again."
       );
+
     } finally {
       setLoading(false);
     }
   };
 
+
   return (
     <div className="page-content">
-      <h1>Student Registration</h1>
+
+      <h1>
+        Student Registration
+      </h1>
 
       <p className="page-description">
-        Register a new student by filling in the form below.
+        Register a new student by
+        filling in the form below.
       </p>
+
 
       <form
         className="registration-form"
         onSubmit={handleSubmit}
       >
+
         <div className="form-group">
+
           <label htmlFor="universityId">
             University ID
           </label>
@@ -113,12 +181,19 @@ function RegistrationForm({ onRegistered }) {
             name="universityId"
             type="text"
             placeholder="Enter university ID"
-            value={formData.universityId}
-            onChange={handleChange}
+            value={
+              formData.universityId
+            }
+            onChange={
+              handleChange
+            }
           />
+
         </div>
 
+
         <div className="form-group">
+
           <label htmlFor="name">
             Full Name
           </label>
@@ -128,12 +203,19 @@ function RegistrationForm({ onRegistered }) {
             name="name"
             type="text"
             placeholder="Enter student name"
-            value={formData.name}
-            onChange={handleChange}
+            value={
+              formData.name
+            }
+            onChange={
+              handleChange
+            }
           />
+
         </div>
 
+
         <div className="form-group">
+
           <label htmlFor="email">
             Email
           </label>
@@ -143,12 +225,19 @@ function RegistrationForm({ onRegistered }) {
             name="email"
             type="email"
             placeholder="Enter email"
-            value={formData.email}
-            onChange={handleChange}
+            value={
+              formData.email
+            }
+            onChange={
+              handleChange
+            }
           />
+
         </div>
 
+
         <div className="form-group">
+
           <label htmlFor="phone">
             Phone
           </label>
@@ -158,12 +247,19 @@ function RegistrationForm({ onRegistered }) {
             name="phone"
             type="tel"
             placeholder="Enter phone number"
-            value={formData.phone}
-            onChange={handleChange}
+            value={
+              formData.phone
+            }
+            onChange={
+              handleChange
+            }
           />
+
         </div>
 
+
         <div className="form-group">
+
           <label htmlFor="gender">
             Gender
           </label>
@@ -171,9 +267,14 @@ function RegistrationForm({ onRegistered }) {
           <select
             id="gender"
             name="gender"
-            value={formData.gender}
-            onChange={handleChange}
+            value={
+              formData.gender
+            }
+            onChange={
+              handleChange
+            }
           >
+
             <option value="">
               Select Gender
             </option>
@@ -189,8 +290,11 @@ function RegistrationForm({ onRegistered }) {
             <option value="Other">
               Other
             </option>
+
           </select>
+
         </div>
+
 
         {error && (
           <div className="message error">
@@ -198,11 +302,13 @@ function RegistrationForm({ onRegistered }) {
           </div>
         )}
 
+
         {message && (
           <div className="message success">
             {message}
           </div>
         )}
+
 
         <button
           type="submit"
@@ -212,7 +318,9 @@ function RegistrationForm({ onRegistered }) {
             ? "Registering..."
             : "Register Student"}
         </button>
+
       </form>
+
     </div>
   );
 }

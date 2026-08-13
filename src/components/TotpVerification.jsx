@@ -11,56 +11,49 @@ function TotpVerification({ onVerified }) {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    setError("");
-
-    if (!code.trim()) {
-      setError("Authentication code is required.");
+    if (loading) {
       return;
     }
+
+    setError("");
 
     if (!/^\d{6}$/.test(code)) {
       setError("Enter a valid 6-digit authentication code.");
       return;
     }
 
-    try {
-      setLoading(true);
+    setLoading(true);
 
+    try {
       const result = await verifyTotp(code);
 
-      console.log("TOTP result:", result);
-
-      if (result.success && result.token) {
-        sessionStorage.setItem(
-          TOKEN_KEY,
-          result.token
+      if (
+        !result ||
+        !result.success ||
+        !result.token
+      ) {
+        setError(
+          result?.message ||
+            "Authentication failed."
         );
-
-        setCode("");
-
-        if (typeof onVerified === "function") {
-          onVerified();
-        }
-
         return;
       }
 
-      setError(
-        result.message ||
-          "Invalid authentication code."
+      sessionStorage.setItem(
+        TOKEN_KEY,
+        result.token
       );
 
+      setCode("");
+
+      if (typeof onVerified === "function") {
+        onVerified(result.token);
+      }
     } catch (error) {
-      console.error(
-        "TOTP verification error:",
-        error
-      );
-
       setError(
         error.message ||
           "Unable to verify the code."
       );
-
     } finally {
       setLoading(false);
     }

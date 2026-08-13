@@ -3,42 +3,85 @@ const API_URL = "/api/exec";
 const TOKEN_KEY =
   "student_portal_token";
 
+const REQUEST_TIMEOUT = 15000;
 
-/* ================================
+
+async function fetchWithTimeout(
+  url,
+  options = {}
+) {
+  const controller =
+    new AbortController();
+
+  const timeoutId =
+    setTimeout(() => {
+      controller.abort();
+    }, REQUEST_TIMEOUT);
+
+  try {
+    const response =
+      await fetch(url, {
+        ...options,
+        signal: controller.signal
+      });
+
+    return response;
+
+  } catch (error) {
+    if (
+      error.name === "AbortError"
+    ) {
+      throw new Error(
+        "Request timed out. Please try again."
+      );
+    }
+
+    throw error;
+
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
+
+/* =================================
    REGISTER STUDENT
-================================ */
+================================= */
 
 export async function registerStudent(
   studentData
 ) {
   const response =
-    await fetch(API_URL, {
-      method: "POST",
+    await fetchWithTimeout(
+      API_URL,
+      {
+        method: "POST",
 
-      headers: {
-        "Content-Type":
-          "text/plain;charset=utf-8"
-      },
+        headers: {
+          "Content-Type":
+            "text/plain;charset=utf-8"
+        },
 
-      body: JSON.stringify({
-        action: "register",
+        body: JSON.stringify({
+          action: "register",
 
-        universityId:
-          studentData.universityId,
+          universityId:
+            studentData.universityId,
 
-        name:
-          studentData.name,
+          name:
+            studentData.name,
 
-        email:
-          studentData.email,
+          email:
+            studentData.email,
 
-        phone:
-          studentData.phone,
+          phone:
+            studentData.phone,
 
-        gender:
-          studentData.gender
-      })
-    });
+          gender:
+            studentData.gender
+        })
+      }
+    );
 
   if (!response.ok) {
     throw new Error(
@@ -50,9 +93,9 @@ export async function registerStudent(
 }
 
 
-/* ================================
+/* =================================
    GET STUDENTS
-================================ */
+================================= */
 
 export async function getStudents() {
   const token =
@@ -75,8 +118,11 @@ export async function getStudents() {
     });
 
   const response =
-    await fetch(
-      `${API_URL}?${params.toString()}`
+    await fetchWithTimeout(
+      `${API_URL}?${params.toString()}`,
+      {
+        method: "GET"
+      }
     );
 
   if (!response.ok) {
@@ -102,9 +148,9 @@ export async function getStudents() {
 }
 
 
-/* ================================
+/* =================================
    DELETE STUDENT
-================================ */
+================================= */
 
 export async function deleteStudent(
   id
@@ -123,20 +169,23 @@ export async function deleteStudent(
   }
 
   const response =
-    await fetch(API_URL, {
-      method: "POST",
+    await fetchWithTimeout(
+      API_URL,
+      {
+        method: "POST",
 
-      headers: {
-        "Content-Type":
-          "text/plain;charset=utf-8"
-      },
+        headers: {
+          "Content-Type":
+            "text/plain;charset=utf-8"
+        },
 
-      body: JSON.stringify({
-        action: "delete",
-        id: id,
-        token: token
-      })
-    });
+        body: JSON.stringify({
+          action: "delete",
+          id: id,
+          token: token
+        })
+      }
+    );
 
   if (!response.ok) {
     throw new Error(

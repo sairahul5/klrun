@@ -1,4 +1,7 @@
-import { useEffect, useState } from "react";
+import {
+  useEffect,
+  useState
+} from "react";
 
 import {
   getStudents,
@@ -18,19 +21,22 @@ function StudentTable({
   const [loading, setLoading] =
     useState(true);
 
+  const [refreshing, setRefreshing] =
+    useState(false);
+
   const [error, setError] =
     useState("");
 
   const [sortField, setSortField] =
     useState("");
 
-  const [
-    sortDirection,
-    setSortDirection
-  ] = useState("asc");
+  const [sortDirection, setSortDirection] =
+    useState("asc");
 
-  const [refreshing, setRefreshing] =
-    useState(false);
+
+  /* ================================
+     LOAD STUDENTS
+  ================================= */
 
   const loadStudents = async (
     showLoader = true
@@ -49,29 +55,33 @@ function StudentTable({
         setStudents(
           result.students || []
         );
-      } else {
-        setError(
-          result.message ||
-            "Unable to load students."
-        );
+        return;
+      }
 
+      if (
+        result.message ===
+        "Authentication required."
+      ) {
         if (
-          result.message ===
-            "Authentication required." &&
           onAuthenticationExpired
         ) {
           onAuthenticationExpired();
         }
+
+        return;
       }
-    } catch (error) {
-      console.error(
-        "Load students error:",
-        error
-      );
 
       setError(
-        "Unable to connect to the server."
+        result.message ||
+          "Unable to load students."
       );
+
+    } catch (error) {
+      setError(
+        error.message ||
+          "Unable to connect to the server."
+      );
+
     } finally {
       if (showLoader) {
         setLoading(false);
@@ -79,71 +89,132 @@ function StudentTable({
     }
   };
 
+
+  /* ================================
+     INITIAL LOAD
+  ================================= */
+
   useEffect(() => {
-    loadStudents();
+    loadStudents(true);
   }, [refresh]);
 
-  const handleRefresh =
-    async () => {
-      try {
-        setRefreshing(true);
-        await loadStudents(false);
-      } finally {
-        setRefreshing(false);
-      }
-    };
 
-  const handleDelete =
-    async (id) => {
-      const confirmed =
-        window.confirm(
-          "Are you sure you want to delete this student?"
+  /* ================================
+     REFRESH
+  ================================= */
+
+  const handleRefresh = async () => {
+    if (refreshing) {
+      return;
+    }
+
+    try {
+      setRefreshing(true);
+      setError("");
+
+      const result =
+        await getStudents();
+
+      if (result.success) {
+        setStudents(
+          result.students || []
         );
-
-      if (!confirmed) {
         return;
       }
 
-      try {
-        const result =
-          await deleteStudent(id);
-
-        if (result.success) {
-          setStudents(
-            (previousStudents) =>
-              previousStudents.filter(
-                (student) =>
-                  String(
-                    student.id
-                  ) !== String(id)
-              )
-          );
-        } else {
-          if (
-            result.message ===
-              "Authentication required." &&
-            onAuthenticationExpired
-          ) {
-            onAuthenticationExpired();
-            return;
-          }
-
-          alert(
-            result.message ||
-              "Delete failed."
-          );
+      if (
+        result.message ===
+        "Authentication required."
+      ) {
+        if (
+          onAuthenticationExpired
+        ) {
+          onAuthenticationExpired();
         }
-      } catch (error) {
-        console.error(
-          "Delete student error:",
-          error
+
+        return;
+      }
+
+      setError(
+        result.message ||
+          "Unable to refresh students."
+      );
+
+    } catch (error) {
+      setError(
+        error.message ||
+          "Unable to refresh students."
+      );
+
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
+
+  /* ================================
+     DELETE
+  ================================= */
+
+  const handleDelete = async (
+    id
+  ) => {
+    const confirmed =
+      window.confirm(
+        "Are you sure you want to delete this student?"
+      );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      const result =
+        await deleteStudent(id);
+
+      if (result.success) {
+        setStudents(
+          (previousStudents) =>
+            previousStudents.filter(
+              (student) =>
+                String(student.id) !==
+                String(id)
+            )
         );
 
-        alert(
-          "Unable to delete student."
-        );
+        return;
       }
-    };
+
+      if (
+        result.message ===
+        "Authentication required."
+      ) {
+        if (
+          onAuthenticationExpired
+        ) {
+          onAuthenticationExpired();
+        }
+
+        return;
+      }
+
+      alert(
+        result.message ||
+          "Delete failed."
+      );
+
+    } catch (error) {
+      alert(
+        error.message ||
+          "Unable to delete student."
+      );
+    }
+  };
+
+
+  /* ================================
+     SORT
+  ================================= */
 
   const handleSort = (
     field
@@ -157,25 +228,33 @@ function StudentTable({
             ? "desc"
             : "asc"
       );
-    } else {
-      setSortField(field);
-      setSortDirection("asc");
+
+      return;
     }
+
+    setSortField(field);
+    setSortDirection("asc");
   };
 
-  const getSortArrow =
-    (field) => {
-      if (
-        sortField !== field
-      ) {
-        return "";
-      }
 
-      return sortDirection ===
-        "asc"
-        ? " ↑"
-        : " ↓";
-    };
+  const getSortArrow = (
+    field
+  ) => {
+    if (
+      sortField !== field
+    ) {
+      return "";
+    }
+
+    return sortDirection === "asc"
+      ? " ↑"
+      : " ↓";
+  };
+
+
+  /* ================================
+     FILTER + SORT
+  ================================= */
 
   const filteredStudents =
     students
@@ -243,8 +322,7 @@ function StudentTable({
             undefined,
             {
               numeric: true,
-              sensitivity:
-                "base"
+              sensitivity: "base"
             }
           );
 
@@ -254,29 +332,42 @@ function StudentTable({
           : -comparison;
       });
 
+
+  /* ================================
+     LOADING
+  ================================= */
+
   if (loading) {
     return (
       <div className="table-card loading-card">
         <div className="spinner">
-          {Array.from(
-            { length: 12 },
-            (_, index) => (
-              <div
-                key={index}
-                className="spinner-blade"
-              />
-            )
-          )}
+          <div className="spinner-blade" />
+          <div className="spinner-blade" />
+          <div className="spinner-blade" />
+          <div className="spinner-blade" />
+          <div className="spinner-blade" />
+          <div className="spinner-blade" />
+          <div className="spinner-blade" />
+          <div className="spinner-blade" />
+          <div className="spinner-blade" />
+          <div className="spinner-blade" />
+          <div className="spinner-blade" />
+          <div className="spinner-blade" />
         </div>
       </div>
     );
   }
 
+
   return (
     <div className="table-card">
+
       <div className="table-header">
+
         <div>
-          <h2>Students</h2>
+          <h2>
+            Students
+          </h2>
 
           <p>
             Total students:{" "}
@@ -284,7 +375,9 @@ function StudentTable({
           </p>
         </div>
 
+
         <div className="table-actions">
+
           <input
             className="search-input"
             type="text"
@@ -296,6 +389,7 @@ function StudentTable({
               )
             }
           />
+
 
           <button
             type="button"
@@ -329,14 +423,18 @@ function StudentTable({
               ? "Refreshing..."
               : "Refresh"}
           </button>
+
         </div>
+
       </div>
+
 
       {error && (
         <div className="message error">
           {error}
         </div>
       )}
+
 
       {!error &&
         filteredStudents.length ===
@@ -348,14 +446,20 @@ function StudentTable({
           </div>
         )}
 
+
       {!error &&
         filteredStudents.length >
           0 && (
           <div className="table-wrapper">
+
             <table>
+
               <thead>
                 <tr>
-                  <th>No.</th>
+
+                  <th>
+                    No.
+                  </th>
 
                   <th
                     className="sortable"
@@ -430,10 +534,13 @@ function StudentTable({
                   <th>
                     Action
                   </th>
+
                 </tr>
               </thead>
 
+
               <tbody>
+
                 {filteredStudents.map(
                   (
                     student,
@@ -444,6 +551,7 @@ function StudentTable({
                         student.id
                       }
                     >
+
                       <td>
                         {index + 1}
                       </td>
@@ -480,6 +588,7 @@ function StudentTable({
 
                       <td>
                         <button
+                          type="button"
                           className="delete-button"
                           onClick={() =>
                             handleDelete(
@@ -490,13 +599,18 @@ function StudentTable({
                           Delete
                         </button>
                       </td>
+
                     </tr>
                   )
                 )}
+
               </tbody>
+
             </table>
+
           </div>
         )}
+
     </div>
   );
 }
