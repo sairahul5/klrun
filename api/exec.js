@@ -1,16 +1,13 @@
 const GOOGLE_APPS_SCRIPT_URL =
   process.env.GOOGLE_APPS_SCRIPT_URL;
 
-export default async function handler(
-  req,
-  res
-) {
+export default async function handler(req, res) {
   try {
     if (!GOOGLE_APPS_SCRIPT_URL) {
       return res.status(500).json({
         success: false,
         message:
-          "Google Apps Script URL is not configured."
+          "GOOGLE_APPS_SCRIPT_URL is not configured."
       });
     }
 
@@ -18,13 +15,13 @@ export default async function handler(
       GOOGLE_APPS_SCRIPT_URL;
 
     if (req.method === "GET") {
-      const query =
+      const params =
         new URLSearchParams(
           req.query || {}
         ).toString();
 
-      if (query) {
-        url += `?${query}`;
+      if (params) {
+        url += `?${params}`;
       }
     }
 
@@ -67,10 +64,12 @@ export default async function handler(
       .send(text);
 
   } catch (error) {
+
     return res.status(500).json({
       success: false,
       message:
-        "Unable to connect to the backend."
+        error.message ||
+        "Backend connection failed."
     });
   }
 }

@@ -10,13 +10,10 @@ function Navbar({
         <button
           type="button"
           className="brand-button"
-          onClick={() =>
-            setPage("register")
-          }
+          onClick={() => setPage("register")}
         >
           KL RUNS
         </button>
-
 
         <div className="nav-links">
 
@@ -27,13 +24,10 @@ function Navbar({
                 ? "nav-button active"
                 : "nav-button"
             }
-            onClick={() =>
-              setPage("register")
-            }
+            onClick={() => setPage("register")}
           >
             Register
           </button>
-
 
           <button
             type="button"
@@ -42,11 +36,21 @@ function Navbar({
                 ? "nav-button active"
                 : "nav-button"
             }
-            onClick={() =>
-              setPage("students")
-            }
+            onClick={() => setPage("students")}
           >
             Students
+          </button>
+
+          <button
+            type="button"
+            className={
+              page === "about"
+                ? "nav-button active"
+                : "nav-button"
+            }
+            onClick={() => setPage("about")}
+          >
+            About
           </button>
 
         </div>

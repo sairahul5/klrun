@@ -8,18 +8,15 @@ export default defineConfig({
   plugins: [react()],
 
   server: {
-    proxy: {
-      "/api": {
-        target: "https://script.google.com",
-        changeOrigin: true,
-        secure: true,
+  proxy: {
+    "/api/exec": {
+      target: "https://script.google.com",
+      changeOrigin: true,
+      secure: true,
 
-        rewrite: (path) =>
-          path.replace(
-            /^\/api\/exec/,
-            `/macros/s/${GOOGLE_SCRIPT_ID}/exec`
-          ),
-      },
-    },
-  },
+      rewrite: () =>
+        `/macros/s/${GOOGLE_SCRIPT_ID}/exec`
+    }
+  }
+}
 });

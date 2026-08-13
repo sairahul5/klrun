@@ -1,34 +1,43 @@
-const SCRIPT_URL =
-  "https://script.google.com/macros/s/AKfycbwgP1EFNB2KmKkT08ryLEfV473nyKLJgj1y5ciHpoMk5r-O6pGT7ek4qgtdjGfG3D5sCw/exec";
+const API_URL = "/api/exec";
 
-const REQUEST_TIMEOUT = 15000;
+const REQUEST_TIMEOUT = 30000;
 
 export async function verifyTotp(code) {
-  const controller =
-    new AbortController();
+  const cleanCode = String(code).trim();
 
-  const timeoutId =
-    setTimeout(() => {
-      controller.abort();
-    }, REQUEST_TIMEOUT);
+  if (!/^\d{6}$/.test(cleanCode)) {
+    return {
+      success: false,
+      authenticated: false,
+      message: "Enter a valid 6-digit code."
+    };
+  }
+
+  const controller = new AbortController();
+
+  const timeout = setTimeout(() => {
+    controller.abort();
+  }, REQUEST_TIMEOUT);
 
   try {
-    const response =
-      await fetch(SCRIPT_URL, {
-        method: "POST",
+    const response = await fetch(API_URL, {
+      method: "POST",
 
-        headers: {
-          "Content-Type":
-            "text/plain;charset=utf-8"
-        },
+      headers: {
+        "Content-Type": "text/plain;charset=utf-8"
+      },
 
-        body: JSON.stringify({
-          action: "verifyTotp",
-          code: String(code).trim()
-        }),
+      body: JSON.stringify({
+        action: "verifyTotp",
+        code: cleanCode
+      }),
 
-        signal: controller.signal
-      });
+      redirect: "follow",
+
+      signal: controller.signal
+    });
+
+    const text = await response.text();
 
     if (!response.ok) {
       throw new Error(
@@ -36,25 +45,27 @@ export async function verifyTotp(code) {
       );
     }
 
-    const text =
-      await response.text();
+    if (!text) {
+      throw new Error(
+        "Empty response from server."
+      );
+    }
 
-    let data;
+    let result;
 
     try {
-      data = JSON.parse(text);
+      result = JSON.parse(text);
     } catch {
       throw new Error(
         "Invalid response from server."
       );
     }
 
-    return data;
+    return result;
 
   } catch (error) {
-    if (
-      error.name === "AbortError"
-    ) {
+
+    if (error.name === "AbortError") {
       throw new Error(
         "Verification timed out. Please try again."
       );
@@ -63,6 +74,6 @@ export async function verifyTotp(code) {
     throw error;
 
   } finally {
-    clearTimeout(timeoutId);
+    clearTimeout(timeout);
   }
 }

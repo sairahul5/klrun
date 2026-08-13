@@ -5,6 +5,7 @@ import Navbar from "./components/Navbar";
 import RegistrationForm from "./components/RegistrationForm";
 import StudentTable from "./components/StudentTable";
 import TotpVerification from "./components/TotpVerification";
+import About from "./components/About";
 
 const TOKEN_KEY = "student_portal_token";
 
@@ -44,12 +45,15 @@ function App() {
       />
 
       <main className="app-container">
+
+        {/* REGISTER PAGE */}
         {page === "register" && (
           <RegistrationForm
             onRegistered={handleRegistered}
           />
         )}
 
+        {/* STUDENTS PAGE */}
         {page === "students" && (
           <>
             {!authenticated ? (
@@ -97,6 +101,12 @@ function App() {
             )}
           </>
         )}
+
+        {/* ABOUT PAGE */}
+        {page === "about" && (
+          <About />
+        )}
+
       </main>
     </>
   );

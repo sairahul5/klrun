@@ -5,8 +5,12 @@ const TOKEN_KEY = "student_portal_token";
 
 function TotpVerification({ onVerified }) {
   const [code, setCode] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+
+  const [loading, setLoading] =
+    useState(false);
+
+  const [error, setError] =
+    useState("");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -17,15 +21,21 @@ function TotpVerification({ onVerified }) {
 
     setError("");
 
-    if (!/^\d{6}$/.test(code)) {
-      setError("Enter a valid 6-digit authentication code.");
+    const cleanCode =
+      code.replace(/\D/g, "").slice(0, 6);
+
+    if (cleanCode.length !== 6) {
+      setError(
+        "Enter a valid 6-digit authentication code."
+      );
       return;
     }
 
     setLoading(true);
 
     try {
-      const result = await verifyTotp(code);
+      const result =
+        await verifyTotp(cleanCode);
 
       if (
         !result ||
@@ -36,6 +46,7 @@ function TotpVerification({ onVerified }) {
           result?.message ||
             "Authentication failed."
         );
+
         return;
       }
 
@@ -46,30 +57,54 @@ function TotpVerification({ onVerified }) {
 
       setCode("");
 
-      if (typeof onVerified === "function") {
+      if (
+        typeof onVerified ===
+        "function"
+      ) {
         onVerified(result.token);
       }
+
     } catch (error) {
+
       setError(
         error.message ||
           "Unable to verify the code."
       );
+
     } finally {
+
       setLoading(false);
     }
   };
 
+  const handleChange = (event) => {
+    const value =
+      event.target.value
+        .replace(/\D/g, "")
+        .slice(0, 6);
+
+    setCode(value);
+    setError("");
+  };
+
   return (
     <div className="totp-card">
-      <h2>Verify Access</h2>
+
+      <h2>
+        Verify Access
+      </h2>
 
       <p>
-        Enter the 6-digit code from your
-        authenticator app.
+        Enter the 6-digit code from
+        your authenticator app.
       </p>
 
-      <form onSubmit={handleSubmit}>
+      <form
+        onSubmit={handleSubmit}
+      >
+
         <div className="form-group">
+
           <label htmlFor="totp-code">
             Authentication Code
           </label>
@@ -81,18 +116,11 @@ function TotpVerification({ onVerified }) {
             maxLength={6}
             placeholder="000000"
             value={code}
-            onChange={(event) => {
-              const value =
-                event.target.value
-                  .replace(/\D/g, "")
-                  .slice(0, 6);
-
-              setCode(value);
-              setError("");
-            }}
+            onChange={handleChange}
             autoComplete="one-time-code"
             disabled={loading}
           />
+
         </div>
 
         {error && (
@@ -112,7 +140,9 @@ function TotpVerification({ onVerified }) {
             ? "Verifying..."
             : "Verify"}
         </button>
+
       </form>
+
     </div>
   );
 }
