@@ -1745,28 +1745,3 @@ td {
   color: blue;
 }
 
-html,
-body,
-#root {
-  background: #f3f6fa !important;
-  background-image: none !important;
-}
-
-#root::before {
-  background-image:
-    linear-gradient(
-      rgba(0, 0, 0, 0.055) 1px,
-      transparent 1px
-    ),
-    linear-gradient(
-      90deg,
-      rgba(0, 0, 0, 0.055) 1px,
-      transparent 1px
-    ) !important;
-
-  background-size: 45px 45px !important;
-}
-
-.about-page::before {
-  background-image: none !important;
-}
