@@ -16,22 +16,6 @@ const members = [
   },
 
   {
-    name: "Rahul",
-    image: "/rahul.jpeg",
-    title: "WEB",
-    description:
-      "Builds and maintains the digital side of KL RUNS.",
-    shortDescription:
-      "Web development, technology and digital systems for KL RUNS.",
-    details: [
-      "Web Development",
-      "Visual Design",
-      "Creative Direction",
-      "KL DESIGN",
-    ],
-  },
-
-  {
     name: "Ashok",
     image: "/ashok.jpg",
     title: "DESIGN",
@@ -44,6 +28,22 @@ const members = [
       "Content Creation",
       "Storytelling",
       "KL MEDIA",
+    ],
+  },
+
+  {
+    name: "Rahul",
+    image: "/rahul.jpeg",
+    title: "WEB",
+    description:
+      "Builds and maintains the digital side of KL RUNS.",
+    shortDescription:
+      "Web development, technology and digital systems for KL RUNS.",
+    details: [
+      "Web Development",
+      "Visual Design",
+      "Creative Direction",
+      "KL DESIGN",
     ],
   },
 
