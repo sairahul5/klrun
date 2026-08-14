@@ -1,107 +1,154 @@
 const GOOGLE_APPS_SCRIPT_URL =
   process.env.GOOGLE_APPS_SCRIPT_URL;
 
-export default async function handler(
-  req,
-  res
-) {
+export default async function handler(req, res) {
+  if (req.method !== "POST") {
+    return res.status(405).json({
+      success: false,
+      message: "Method not allowed.",
+    });
+  }
+
   try {
-    if (!GOOGLE_APPS_SCRIPT_URL) {
+    const {
+      name,
+      universityId,
+      email,
+      subject,
+      message,
+    } = req.body || {};
+
+    if (!name) {
+      return res.status(400).json({
+        success: false,
+        message: "Name is required.",
+      });
+    }
+
+    if (!universityId) {
+      return res.status(400).json({
+        success: false,
+        message: "University ID is required.",
+      });
+    }
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: "Email is required.",
+      });
+    }
+
+    if (!subject) {
+      return res.status(400).json({
+        success: false,
+        message: "Problem is required.",
+      });
+    }
+
+    if (!message) {
+      return res.status(400).json({
+        success: false,
+        message: "Description is required.",
+      });
+    }
+
+    const webhook =
+      process.env.DISCORD_WEBHOOK_URL;
+
+    if (!webhook) {
       return res.status(500).json({
         success: false,
         message:
-          "GOOGLE_APPS_SCRIPT_URL is not configured.",
+          "Discord webhook is not configured.",
       });
     }
 
-    if (
-      req.method !== "GET" &&
-      req.method !== "POST"
-    ) {
-      return res.status(405).json({
-        success: false,
-        message:
-          "Method not allowed.",
-      });
-    }
+    const discordResponse = await fetch(
+      webhook,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: "KL RUNS Support",
 
-    let url =
-      GOOGLE_APPS_SCRIPT_URL;
+          embeds: [
+            {
+              title: "New Query",
 
-    if (req.method === "GET") {
-      const params =
-        new URLSearchParams(
-          req.query || {}
-        ).toString();
+              color: 3447003,
 
-      if (params) {
-        url += `?${params}`;
+              fields: [
+                {
+                  name: "Name",
+                  value: String(name),
+                  inline: true,
+                },
+                {
+                  name: "University ID",
+                  value: String(universityId),
+                  inline: true,
+                },
+                {
+                  name: "Email",
+                  value: String(email),
+                  inline: false,
+                },
+                {
+                  name: "Problem",
+                  value: String(subject),
+                  inline: false,
+                },
+                {
+                  name: "Description",
+                  value: String(message),
+                  inline: false,
+                },
+              ],
+
+              footer: {
+                text: "KL RUNS Query System",
+              },
+
+              timestamp:
+                new Date().toISOString(),
+            },
+          ],
+        }),
       }
-    }
-
-    const options = {
-      method: req.method,
-      redirect: "follow",
-      headers: {},
-    };
-
-    if (req.method === "POST") {
-      options.headers[
-        "Content-Type"
-      ] =
-        "text/plain;charset=utf-8";
-
-      options.body =
-        typeof req.body === "string"
-          ? req.body
-          : JSON.stringify(
-              req.body || {}
-            );
-    }
-
-    const response =
-      await fetch(
-        url,
-        options
-      );
-
-    const text =
-      await response.text();
-
-    res.setHeader(
-      "Content-Type",
-      "application/json"
     );
 
-    return res
-      .status(response.status)
-      .send(text);
+    if (!discordResponse.ok) {
+      const discordText =
+        await discordResponse.text();
+
+      console.error(
+        "Discord error:",
+        discordText
+      );
+
+      return res.status(502).json({
+        success: false,
+        message:
+          "Failed to send query to Discord.",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message:
+        "Query submitted successfully.",
+    });
 
   } catch (error) {
+    console.error(error);
+
     return res.status(500).json({
       success: false,
       message:
-        error.message ||
-        "Backend connection failed.",
+        "Failed to submit query.",
     });
   }
-}
-
-export async function submitQuery(query) {
-  checkApiUrl();
-
-  return fetchWithTimeout(API_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "text/plain;charset=utf-8",
-    },
-    body: JSON.stringify({
-      action: "submitQuery",
-      name: query.name,
-      universityId: query.universityId,
-      email: query.email,
-      subject: query.subject,
-      message: query.message,
-    }),
-  });
 }
