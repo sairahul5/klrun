@@ -86,3 +86,22 @@ export default async function handler(
     });
   }
 }
+
+export async function submitQuery(query) {
+  checkApiUrl();
+
+  return fetchWithTimeout(API_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "text/plain;charset=utf-8",
+    },
+    body: JSON.stringify({
+      action: "submitQuery",
+      name: query.name,
+      universityId: query.universityId,
+      email: query.email,
+      subject: query.subject,
+      message: query.message,
+    }),
+  });
+}

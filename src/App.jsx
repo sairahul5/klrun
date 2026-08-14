@@ -6,6 +6,7 @@ import RegistrationForm from "./components/RegistrationForm";
 import StudentTable from "./components/StudentTable";
 import TotpVerification from "./components/TotpVerification";
 import About from "./components/About";
+import Query from "./components/Query";
 
 const TOKEN_KEY = "student_portal_token";
 
@@ -15,11 +16,16 @@ function App() {
   const [refresh, setRefresh] = useState(0);
 
   const [authenticated, setAuthenticated] = useState(
-    () => Boolean(sessionStorage.getItem(TOKEN_KEY))
+    () =>
+      Boolean(
+        sessionStorage.getItem(TOKEN_KEY)
+      )
   );
 
   const handleRegistered = () => {
-    setRefresh((previous) => previous + 1);
+    setRefresh(
+      (previous) => previous + 1
+    );
   };
 
   const handleAuthenticationSuccess = () => {
@@ -46,14 +52,12 @@ function App() {
 
       <main className="app-container">
 
-        {/* REGISTER PAGE */}
         {page === "register" && (
           <RegistrationForm
             onRegistered={handleRegistered}
           />
         )}
 
-        {/* STUDENTS PAGE */}
         {page === "students" && (
           <>
             {!authenticated ? (
@@ -61,8 +65,8 @@ function App() {
                 <h1>Student Access</h1>
 
                 <p className="page-description">
-                  Authentication is required to view
-                  student data.
+                  Authentication is required to
+                  view student data.
                 </p>
 
                 <TotpVerification
@@ -75,10 +79,13 @@ function App() {
               <div>
                 <div className="students-heading">
                   <div>
-                    <h1>Registered Students</h1>
+                    <h1>
+                      Registered Students
+                    </h1>
 
                     <p>
-                      View and manage registered students.
+                      View and manage registered
+                      students.
                     </p>
                   </div>
 
@@ -102,7 +109,10 @@ function App() {
           </>
         )}
 
-        {/* ABOUT PAGE */}
+        {page === "query" && (
+          <Query />
+        )}
+
         {page === "about" && (
           <About />
         )}
@@ -111,5 +121,5 @@ function App() {
     </>
   );
 }
-//Exportig the app
+
 export default App;

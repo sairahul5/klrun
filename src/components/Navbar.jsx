@@ -1,24 +1,21 @@
 function Navbar({
   page,
   setPage,
-  authenticated
+  authenticated,
 }) {
   return (
     <nav className="navbar">
       <div className="navbar-inner">
 
         <button
-  type="button"
-  className="brand-button"
-  onClick={() => setPage("register")}
->
-  <img
-    src="/image.png"
-    alt="KL RUNS"
-    className="navbar-logo"
-  />
-  <span>KL RUNS</span>
-</button>
+          type="button"
+          className="brand-button"
+          onClick={() =>
+            setPage("register")
+          }
+        >
+          KL RUNS
+        </button>
 
         <div className="nav-links">
 
@@ -29,7 +26,9 @@ function Navbar({
                 ? "nav-button active"
                 : "nav-button"
             }
-            onClick={() => setPage("register")}
+            onClick={() =>
+              setPage("register")
+            }
           >
             Register
           </button>
@@ -41,9 +40,25 @@ function Navbar({
                 ? "nav-button active"
                 : "nav-button"
             }
-            onClick={() => setPage("students")}
+            onClick={() =>
+              setPage("students")
+            }
           >
             Students
+          </button>
+
+          <button
+            type="button"
+            className={
+              page === "query"
+                ? "nav-button active"
+                : "nav-button"
+            }
+            onClick={() =>
+              setPage("query")
+            }
+          >
+            Query
           </button>
 
           <button
@@ -53,13 +68,14 @@ function Navbar({
                 ? "nav-button active"
                 : "nav-button"
             }
-            onClick={() => setPage("about")}
+            onClick={() =>
+              setPage("about")
+            }
           >
             About
           </button>
 
         </div>
-
       </div>
     </nav>
   );
