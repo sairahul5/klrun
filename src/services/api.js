@@ -83,8 +83,8 @@ export async function submitQuery(data) {
         name: data.name,
         universityId: data.universityId,
         email: data.email,
-        subject: data.problem,
-        message: data.description,
+        subject: data.subject,
+        message: data.message,
       }),
     }
   );

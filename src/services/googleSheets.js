@@ -59,7 +59,7 @@ export async function registerStudent(
 
         headers: {
           "Content-Type":
-            "text/plain;charset=utf-8"
+            "application/json"
         },
 
         body: JSON.stringify({
@@ -176,7 +176,7 @@ export async function deleteStudent(
 
         headers: {
           "Content-Type":
-            "text/plain;charset=utf-8"
+            "application/json"
         },
 
         body: JSON.stringify({
