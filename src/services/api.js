@@ -80,6 +80,7 @@ export async function submitQuery(data) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
+        action: "submitQuery",
         name: data.name,
         universityId: data.universityId,
         email: data.email,

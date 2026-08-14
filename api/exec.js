@@ -76,7 +76,8 @@ export default async function handler(req, res) {
     if (
       action === "register" ||
       action === "verifyTotp" ||
-      action === "delete"
+      action === "delete" ||
+      action === "submitQuery"
     ) {
 
       const response =
