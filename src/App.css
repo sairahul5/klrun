@@ -1905,3 +1905,44 @@ td {
     font-size: 30px;
   }
 }
+
+/* =====================================================
+   FINAL MOBILE NAVBAR SCROLL FIX
+   Swipe left/right to reveal About
+   ===================================================== */
+
+@media (max-width: 700px) {
+  .navbar {
+    position: relative !important;
+    width: calc(100% - 24px);
+    margin: 10px auto 0;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .navbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .navbar-inner {
+    width: max-content !important;
+    min-width: 100% !important;
+    min-height: 58px;
+    justify-content: flex-start !important;
+    gap: 8px;
+    flex-shrink: 0 !important;
+  }
+
+  .brand-button,
+  .nav-links,
+  .nav-button {
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+  }
+
+  .nav-links {
+    margin-left: auto;
+  }
+}
